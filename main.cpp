@@ -103,7 +103,7 @@ char*
 ClearWhitespace(char* Buffer)
 {
     char* C = Buffer;
-    while(*C == ' ' || *C == '\t') C++;
+    while(*C != 0 && (*C == ' ' || *C == '\t')) C++;
     return C;
 }
 
@@ -124,17 +124,25 @@ IsWhitespace(char C)
 inline bool
 IsPrintableChar(char C)
 {
-    return !(IsWhitespace(C) || IsNewline(C));
+    return !(C == 0 || IsWhitespace(C) || IsNewline(C));
 }
 
+
+void
+PrintWordToken(token Token)
+{
+    char* C = Token.Start;
+    printf("WORD: ");
+    while(IsPrintableChar(*C)) printf("%c", *C++);
+    puts("");
+}
 
 void
 PrintWord(token Token)
 {
     char* C = Token.Start;
-    printf("WORD: ");
-    while(IsPrintableChar(*C)) putchar(*C++);
-    puts("");
+    while(IsPrintableChar(*C)) printf("%c", *C++);
+    printf(" ");
 }
 
 void
@@ -187,11 +195,10 @@ token*
 Tokenize(char* Buffer)
 {
     token* Tokens = 0;
-    Buffer = ClearWhitespace(Buffer);
-    
     
     while(Buffer[0] != 0)
     {
+        Buffer = ClearWhitespace(Buffer);
         switch(Buffer[0])
         {
             case '\r':
@@ -212,11 +219,24 @@ Tokenize(char* Buffer)
                 while(IsPrintableChar(*Buffer)) Buffer++;
             } break;
         }
-        Buffer = ClearWhitespace(Buffer);
     }
     token FinalToken = {TOKEN_EOF, 0};
     sbpush(Tokens, FinalToken);
     return Tokens;
+}
+
+u32
+PrintParagraph(token* Tokens, u32 Index)
+{
+    printf("<p>");
+    u32 NextIndex = Index+1;
+    while(Tokens[Index].Type != TOKEN_NEWLINE)
+    {
+        PrintWord(Tokens[Index]);
+        Index++;
+    }
+    printf("</p>asdfadsf");
+    return Index;
 }
 
 int
@@ -228,6 +248,7 @@ main()
         I < sbcount(Tokens);
         I++)
     {
-        PrintToken(Tokens[I]);
+        // PrintToken(Tokens[I]);
     }
+    u32 Index = PrintParagraph(Tokens, 0);
 }
