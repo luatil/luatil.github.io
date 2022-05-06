@@ -1,0 +1,152 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Caches</title><style type="text/css">body{margin:40px auto;max-width:650px;line-height:1.6;font-size:18px;color:#444;padding:0 10px}h1,h2,h3{line-height:1.2}</style></head>
+<body>
+<p>O prazo de entrega expira as 8:00:00 do dia 31/5/2022.</p>
+<ul>
+<li>Arquitetura hibrida P2P e cliente/servidor</li>
+<li>O sistema deve ser composto por diversas maquinas num ambiente local<ul>
+<li>A correcao sera feita com 3 maquinas</li>
+</ul>
+</li>
+<li>O servidor deve receber como parametro a porta (ou portas) </li>
+<li>O cliente deve receber o ip e a porta (ou portas)</li>
+</ul>
+<h3 id="servidor">Servidor</h3>
+<ul>
+<li>Monitorar se os clientes estao conectados</li>
+<li>Autenticar os usuarios</li>
+<li>Manter uma tabela de classificacao dos jogadores<ul>
+<li>cada vitoria da 3 pontos</li>
+<li>cada empate da 1 ponto</li>
+</ul>
+</li>
+<li>Registrar diversas acoes num arquivo de log</li>
+<li>Os usuarios do sistema e a tabela de classificacao devem ser persistentes</li>
+<li>Deve suportar tanto UDP quanto TCP</li>
+<li>Idealmente o servidor deve ser um daemon, mas pode ser executado com um &amp;</li>
+<li>Na inicializacao, caso houver uma falha na ultima execucao, o servidor deve passar a enviar os heratbeats para os clientes caso ainda estejam conectados</li>
+</ul>
+<h3 id="clientes">Clientes</h3>
+<ul>
+<li>Os comandos dos jogos devem ser enviados <strong>exclusivamente</strong> entre os clientes</li>
+<li>Deve ser uma conexao TCP</li>
+</ul>
+<h3 id="requisitos">Requisitos</h3>
+<ul>
+<li>Quando o cliente executar o codigo deve ser exibido o seguinte prompt: <pre><code>JogoDaVelha&gt;
+</code></pre></li>
+</ul>
+<p>O sistema deve implementar um protocolo que atenda os seguintes requisitos: </p>
+<ul>
+<li>verificacao periodica iniciada pelo servidor, de que os clientes continuem continuem conectados (heartbeat)</li>
+<li>verificacao periodica de clientes da latencia da conexao</li>
+<li>envio das credencias e senhas em texto plano</li>
+<li>troca de mensagens de modo texto entre clientes e servidor</li>
+</ul>
+<h3 id="comandos-pacotes-">Comandos (pacotes?)</h3>
+<p>Os comandos 1, 2, 11 e 12 devem ocororrer sem a necessidade de interação do usuário.</p>
+<p>1 e 2 são realizados de forma periódica
+11 e 12 são realizados por eventos</p>
+<ol>
+<li>heartbeat entre servidor e clientes</li>
+<li>verificacao de latencia entre clientes. Informa os 3 ultimos valores de latencia que foram medidos para o oponente<ul>
+<li><code>delay</code></li>
+</ul>
+</li>
+<li>criacao de um novo usuario<ul>
+<li><code>new &lt;usuario&gt; &lt;senha&gt;</code></li>
+</ul>
+</li>
+<li>login<ul>
+<li><code>in &lt;usuario&gt; &lt;senha&gt;</code></li>
+</ul>
+</li>
+<li>mudanca de senha<ul>
+<li><code>pass &lt;senha_antiga&gt; &lt;senha_nova&gt;</code></li>
+</ul>
+</li>
+<li>logout<ul>
+<li><code>out</code></li>
+</ul>
+</li>
+<li>solicitacao da lista de usuarios conectados e se estao numa partida<ul>
+<li><code>l</code></li>
+</ul>
+</li>
+<li>Inicio de uma partida (definir quem eh X e quem eh 0). Pode ou nao aceitar<ul>
+<li><code>call &lt;oponente&gt;</code></li>
+</ul>
+</li>
+<li>envio de uma jogado (linha e coluna)<ul>
+<li><code>play &lt;linha&gt; &lt;coluna&gt;</code></li>
+</ul>
+</li>
+<li>encerramento de uma partida por um dos jogadores antes dela terminar (quit)<ul>
+<li><code>over</code></li>
+</ul>
+</li>
+<li>Recebimento do tabuleiro atualizado (a shell deve travar para quem fez a jogada ate o a proxima jogada ser realizada ou ate a conexao cair)</li>
+<li>Envio do resultado da partida para o servidor se o servidor ’caiu’ no meio da partida, é necessário esperar para tentar reconectar e reenviar o resultado. Essa tentativa deve esperar até 3 minutos. Se nesse intervalo não for possível reconectar ao servidor, uma mensagem de erro deve ser informada para o jogador</li>
+<li>solicitação da classificação de todos os usuários existentes - tabela de pontuacao<ul>
+<li><code>halloffame</code></li>
+</ul>
+</li>
+</ol>
+<p>** 
+finaliza a execucao do cliente e retorna para o shell do sistema operacional
+<code>bye</code></p>
+<h3 id="log">LOG</h3>
+<p>O servidor deve manter um arquivo de log informando o que aconteceu e quando isso aconteceu. </p>
+<p>Devem ser registrados: </p>
+<ul>
+<li>Servidor iniciado<ul>
+<li>Informar se foi a ultima execucao foi bem sucedida ou se houve alguma falha.</li>
+</ul>
+</li>
+<li>Conexao realizada por um clinte (Endereco IP do cliente)</li>
+<li>Login (Nome do usuario que conseguiu - ou nao - logar) e o endereco ip de onde veio o login</li>
+<li>Desconexao realizada por um cliente (Endereco IP do cliente)</li>
+<li>Inicio de uma partida (Endereco ip e o nome dos usuarios dos jogadores)</li>
+<li>Finalização de uma partida (Endereço IP, nomes dos usuários dos jogadores e o nome do vencedor)</li>
+<li>Desconexão inesperada de um cliente. Verificada pelos hearbeats</li>
+<li>Servidor finalizado</li>
+</ul>
+<h3 id="slides">Slides</h3>
+<ul>
+<li>Formato .pdf</li>
+<li>Informar se o protocolo foi baseado em algum existente ou se foi criado do zero</li>
+<li>Apresentar gráficos informando sobre o uso de rede e de cpu tanto dos clientes quanto do servidor nos 3 seguintes cenários<ul>
+<li>Apenas o servidor, sem nenhum cliente conectado</li>
+<li>Com o servidor e com dois clientes conectados mas sem jogar</li>
+<li>Com o servidor e dois clientes conectando e jogando</li>
+<li>Incluir informacoes sobre o sistema computacional e de rede</li>
+<li>Incluir detalhes sobre como foi avaliada a carga de rede</li>
+<li>Certifique-se de manter todos os softwares que realizam a internet fechados</li>
+<li>Os experimentos nao podem ser feitos via o localhost</li>
+<li>Recomendado o uso de VirtualBox, Xen ou docker</li>
+<li>Apresente os resultados com media, dispersao, intervalo de confianca por exemplo</li>
+<li>Garanta que os slides podem ser apresentados em ate 10 minutos</li>
+</ul>
+</li>
+</ul>
+<h3 id="entrega">Entrega</h3>
+<ul>
+<li>formato tar.gz contendo<ul>
+<li>fonte do cliente e do servidor</li>
+<li>Makefile (ou similar)</li>
+<li>arquivo leiame</li>
+<li>.pdf dos slides</li>
+</ul>
+</li>
+<li>o desempacotamento deve produzir o nome ep2-henrique-lua</li>
+</ul>
+<h3 id="d-vidas">Dúvidas</h3>
+<ul>
+<li>O sistema deve tolerar a seguinte falha do servidor, limitada a um intervalo de 3 minutos. Se em 3 minutos o servidor não voltar a um estado correto de execução, a falha deve ser informada para algum cliente que esteja aguardando a falha ser corrigida para se comunicar com o servidor: Processo do servidor foi finalizado por um &#39;kill -9&#39;  Recomenda-se a leitura das secções dedicadas a falhas no livro do Steves. (Chapter 5)</li>
+</ul>
+<h3 id="avaliacao">Avaliacao</h3>
+<ul>
+<li>60% implementacao</li>
+<li>10% LEIAME</li>
+<li>30% slides</li>
+</ul>
+</body>
