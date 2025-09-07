@@ -1,0 +1,18 @@
+---
+title: "About"
+image: media/profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://x.com/luatil
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/lu%C3%A3-santilli-b01b901b4/
+    - icon: github
+      text: Github
+      href: https://github.com/luatil
+---
+
+About this blog
